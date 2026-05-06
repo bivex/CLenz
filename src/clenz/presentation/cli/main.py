@@ -18,9 +18,11 @@ from clenz.application.control_flow import (
 from clenz.application.dto import ParseDirectoryCommand, ParseFileCommand, ParsingJobReportDTO
 from clenz.application.use_cases import ParsingJobService
 from clenz.domain.errors import ClenzError
+from clenz.domain.ports import SourceRepository
 from clenz.infrastructure.antlr.control_flow_extractor import AntlrCControlFlowExtractor
 from clenz.infrastructure.antlr.parser_adapter import AntlrCSyntaxParser
 from clenz.infrastructure.filesystem.source_repository import FileSystemSourceRepository
+from clenz.infrastructure.linting.smell_scanner import AntlrCSmellScanner
 from clenz.infrastructure.rendering.nassi_html_renderer import HtmlNassiDiagramRenderer
 from clenz.infrastructure.system import (
     InMemoryParsingJobRepository,
@@ -80,6 +82,10 @@ def main(argv: list[str] | None = None) -> int:
             ]
             print(json.dumps(payload, indent=2))
             return 0
+        elif args.command == "smell-file":
+            return _handle_smell_file(args.path)
+        elif args.command == "smell-dir":
+            return _handle_smell_dir(args.path)
         else:
             parser.error(f"unsupported command: {args.command}")
     except ClenzError as error:
@@ -120,6 +126,18 @@ def _build_argument_parser() -> argparse.ArgumentParser:
         "--out",
         help="Output directory. Defaults to <input>.nassi/.",
     )
+
+    smell_file = subparsers.add_parser(
+        "smell-file",
+        help="Scan one C file for code smells.",
+    )
+    smell_file.add_argument("path", help="Path to a .c file.")
+
+    smell_dir = subparsers.add_parser(
+        "smell-dir",
+        help="Scan all C files in a directory for code smells.",
+    )
+    smell_dir.add_argument("path", help="Path to a directory.")
     return parser
 
 
@@ -348,6 +366,75 @@ def _render_directory_index(
   </body>
 </html>
 """
+
+
+def _handle_smell_file(path: str) -> int:
+    repo = FileSystemSourceRepository()
+    scanner = AntlrCSmellScanner()
+    source = repo.load_file(path)
+    report = scanner.scan(source)
+    payload = {
+        "source_location": report.source_location,
+        "line_count": report.line_count,
+        "function_count": report.function_count,
+        "smell_count": len(report.smells),
+        "errors": report.error_count,
+        "warnings": report.warning_count,
+        "info": report.info_count,
+        "clean": report.is_clean,
+        "smells": [
+            {
+                "kind": s.kind.value,
+                "severity": s.severity.value,
+                "message": s.message,
+                "line": s.line,
+                "column": s.column,
+            }
+            for s in report.smells
+        ],
+    }
+    print(json.dumps(payload, indent=2))
+    return 1 if report.error_count > 0 else 0
+
+
+def _handle_smell_dir(path: str) -> int:
+    repo = FileSystemSourceRepository()
+    scanner = AntlrCSmellScanner()
+    sources = repo.list_c_sources(path)
+    results = []
+    total_errors = 0
+    for source in sources:
+        report = scanner.scan(source)
+        total_errors += report.error_count
+        results.append(
+            {
+                "source_location": report.source_location,
+                "line_count": report.line_count,
+                "function_count": report.function_count,
+                "smell_count": len(report.smells),
+                "errors": report.error_count,
+                "warnings": report.warning_count,
+                "info": report.info_count,
+                "clean": report.is_clean,
+                "smells": [
+                    {
+                        "kind": s.kind.value,
+                        "severity": s.severity.value,
+                        "message": s.message,
+                        "line": s.line,
+                        "column": s.column,
+                    }
+                    for s in report.smells
+                ],
+            }
+        )
+    payload = {
+        "file_count": len(results),
+        "total_errors": total_errors,
+        "files": results,
+    }
+    print(json.dumps(payload, indent=2))
+    return 1 if total_errors > 0 else 0
 
 
 if __name__ == "__main__":

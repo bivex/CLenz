@@ -9,6 +9,7 @@ from typing import Sequence
 from clenz.domain.control_flow import ControlFlowDiagram
 from clenz.domain.events import DomainEvent
 from clenz.domain.model import GrammarVersion, ParseOutcome, ParsingJob, SourceUnit
+from clenz.domain.smells import SmellReport
 
 
 class SourceRepository(ABC):
@@ -47,6 +48,12 @@ class CControlFlowExtractor(ABC):
 class NassiDiagramRenderer(ABC):
     @abstractmethod
     def render(self, diagram: ControlFlowDiagram) -> str:
+        raise NotImplementedError
+
+
+class CSmellScanner(ABC):
+    @abstractmethod
+    def scan(self, source_unit: SourceUnit) -> SmellReport:
         raise NotImplementedError
 
 
