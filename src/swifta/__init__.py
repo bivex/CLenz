@@ -1,0 +1,2 @@
+"""Swifta package."""
+

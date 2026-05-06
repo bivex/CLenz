@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=80", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "swifta"
+version = "0.1.0"
+description = "A hexagonal Swift parser built on top of ANTLR."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+  "antlr4-python3-runtime==4.13.2",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.4.0",
+  "ruff>=0.12.0",
+]
+
+[project.scripts]
+swifta = "swifta.presentation.cli.main:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+exclude = [
+  "src/swifta/infrastructure/antlr/generated/swift5",
+]

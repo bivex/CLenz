@@ -1,0 +1,2 @@
+"""ANTLR infrastructure adapter."""
+
