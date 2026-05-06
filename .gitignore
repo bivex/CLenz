@@ -6,4 +6,5 @@ __pycache__/
 *.egg-info/
 build/
 dist/
-src/swifta/infrastructure/antlr/generated/swift5/
+src/clenz/infrastructure/antlr/generated/c/
+output/

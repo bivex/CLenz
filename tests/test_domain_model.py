@@ -2,8 +2,8 @@ from datetime import UTC, datetime
 
 import pytest
 
-from swifta.domain.errors import EmptyParsingJobError
-from swifta.domain.model import (
+from clenz.domain.errors import EmptyParsingJobError
+from clenz.domain.model import (
     GrammarVersion,
     ParseOutcome,
     ParseStatistics,
@@ -20,8 +20,8 @@ def test_parsing_job_requires_at_least_one_source_unit() -> None:
 
 def test_parsing_job_tracks_outcomes() -> None:
     source_unit = SourceUnit(
-        identifier=SourceUnitId("/tmp/example.swift"),
-        location="/tmp/example.swift",
+        identifier=SourceUnitId("/tmp/example.c"),
+        location="/tmp/example.c",
         content="struct Example {}",
     )
     job = ParsingJob(
