@@ -25,6 +25,12 @@ class SmellKind(StrEnum):
     SHORT_NAME = "short_name"
     LARGE_FILE = "large_file"
     MIXED_ABSTRACTION = "mixed_abstraction"
+    DEEP_NESTING = "deep_nesting"
+    EMPTY_CONTROL_FLOW = "empty_control_flow"
+    TOO_MANY_PARAMETERS = "too_many_parameters"
+    RETURN_COUNT = "return_count"
+    CYCLOMATIC_COMPLEXITY = "cyclomatic_complexity"
+    TODO_COMMENT = "todo_comment"
 
 
 @dataclass(frozen=True, slots=True)
