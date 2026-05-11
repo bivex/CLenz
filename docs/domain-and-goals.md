@@ -2,16 +2,16 @@
 
 ## Problem Statement
 
-Teams need a reliable way to inspect Swift code outside the Swift compiler for two related jobs:
+Teams need a reliable way to inspect C code outside a full compiler toolchain for two related jobs:
 
 * produce a stable, machine-consumable structural report that other tools can automate against
 * produce a human-readable control-flow view that helps engineers inspect branching logic quickly
 
-Swifta exists to turn raw Swift source into those two outputs without coupling the core model to CLI details, filesystem traversal, or ANTLR-specific concerns.
+CLenz exists to turn raw C source into those two outputs without coupling the core model to CLI details, filesystem traversal, or ANTLR-specific concerns.
 
 ## Business Goals
 
-1. Parse Swift code in a repeatable and automatable way.
+1. Parse C code in a repeatable and automatable way.
 2. Expose a stable structural model that downstream tools can trust even as delivery channels evolve.
 3. Extract structured control flow from function bodies so higher-level visualizations can be built on top of it.
 4. Generate Nassi-Shneiderman HTML diagrams that are useful for inspection, onboarding, and documentation.
@@ -24,9 +24,9 @@ Swifta exists to turn raw Swift source into those two outputs without coupling t
 
 The system currently supports:
 
-* parsing one `.swift` file
+* parsing one `.c` file
 * parsing a directory recursively
-* extracting imports, type declarations, functions, variables, and extensions
+* extracting includes, type definitions, functions, variables, structs, enums, and macros
 * returning syntax diagnostics as part of the contract
 * exposing grammar and report versions in the output
 
@@ -35,7 +35,7 @@ The system currently supports:
 The system currently supports:
 
 * extracting structured steps for functions and methods
-* representing `if/else`, `guard`, `while`, `for-in`, `repeat-while`, `switch`, `do/catch`, and `defer`
+* representing `if/else`, `while`, `for`, `do-while`, `switch`, and `break`/`continue`
 * expanding common trailing closures into inline control-flow steps
 * rendering one HTML Nassi-Shneiderman diagram per source file
 * rendering directory bundles with an index page
@@ -50,7 +50,7 @@ The system currently supports:
 
 ## In Scope
 
-* lexical and syntactic parsing of Swift source files
+* lexical and syntactic parsing of C source files
 * extraction of a stable structural model
 * extraction of structured control flow from function bodies
 * project-level orchestration across many files
@@ -63,7 +63,7 @@ The system currently supports:
 * full semantic analysis
 * type inference or name resolution
 * build graph resolution and module compilation context
-* mutation of source code or code generation back into Swift
+* mutation of source code or code generation back into C
 * distributed deployment concerns
 * long-lived persistence beyond process-local execution
 
@@ -83,7 +83,7 @@ Its invariants are:
 
 ### Source Asset
 
-`SourceUnit` represents one Swift file with:
+`SourceUnit` represents one C source file with:
 
 * a stable `SourceUnitId`
 * a source `location`

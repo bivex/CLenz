@@ -4,23 +4,23 @@
 
 ### Parse Report Capabilities
 
-1. The system must parse a single `.swift` file.
-2. The system must parse a directory recursively and ignore non-Swift files.
+1. The system must parse a single `.c` file.
+2. The system must parse a directory recursively and ignore non-C files.
 3. The system must return a versioned parse report for each source unit.
 4. The system must aggregate file-level outcomes into one parsing job result.
 5. The system must capture syntax diagnostics with message, severity, line, and column.
 6. The system must continue parsing other files when one file fails.
-7. The system must extract a stable structural model containing at least imports, type aliases, types, functions, variables, constants, and extensions.
+7. The system must extract a stable structural model containing at least includes, type definitions, functions, variables, constants, structs, enums, and macros.
 8. The system must expose grammar version and report schema version as part of the result contract.
 9. The system must distinguish successful parsing, parsing with diagnostics, and technical failure.
 10. The CLI must return machine-readable JSON for parse workflows.
 
 ### Control Flow and Diagram Capabilities
 
-11. The system must extract structured control flow for each function or method in a Swift source file.
-12. The control-flow model must support `if/else`, `guard`, `while`, `for-in`, `repeat-while`, `switch`, `do/catch`, and `defer`.
-13. The extractor must expand supported trailing closures when doing so improves the structural control-flow model.
-14. The system must build an HTML Nassi-Shneiderman diagram for a single Swift file.
+11. The system must extract structured control flow for each function in a C source file.
+12. The control-flow model must support `if/else`, `while`, `for`, `do-while`, `switch`, `break`, and `continue`.
+13. The extractor must expand common trailing patterns when doing so improves the structural control-flow model.
+14. The system must build an HTML Nassi-Shneiderman diagram for a single C file.
 15. The system must build a directory bundle of Nassi diagrams and an index page that links to each generated document.
 16. Diagram metadata must expose source location, function count, and function names.
 17. Diagram rendering must preserve function signatures and qualified names.
@@ -86,7 +86,7 @@
 
 ## Constraints and Honesty
 
-The current parser is based on the public `antlr/grammars-v4` Swift 5 grammar and inherits its limits. The system is expected to be honest about ambiguity, unsupported syntax, or grammar drift. When the tool cannot provide compiler-grade certainty, the contract should surface that limitation rather than hide it.
+The current parser is based on the public `antlr/grammars-v4` C11 grammar and inherits its limits. The system is expected to be honest about ambiguity, unsupported syntax, or grammar drift. When the tool cannot provide compiler-grade certainty, the contract should surface that limitation rather than hide it.
 
 ## Quality Attributes
 

@@ -2,7 +2,7 @@
 
 ## System Purpose
 
-Swifta owns the flow from Swift source input to two output families:
+CLenz owns the flow from C source input to two output families:
 
 * versioned parse reports for machines
 * Nassi-Shneiderman HTML diagrams for humans
@@ -14,15 +14,15 @@ It is not a compiler, build system, or semantic analysis engine. It is a source-
 ### Primary Actors
 
 * developers running the CLI locally
-* CI pipelines validating or cataloging Swift source
+* CI pipelines validating or cataloging C source
 * downstream tools that consume JSON parse output
 * engineers opening generated HTML diagrams in a browser
 
 ### Neighbor Systems
 
-* the local filesystem that stores Swift input files and generated artifacts
-* the vendored ANTLR Swift grammar and generated parser runtime
-* future analysis or indexing systems that may consume Swifta outputs
+* the local filesystem that stores C input files and generated artifacts
+* the vendored ANTLR C grammar and generated parser runtime
+* future analysis or indexing systems that may consume CLenz outputs
 * browser runtimes that display generated HTML diagrams
 
 ## System Boundary
