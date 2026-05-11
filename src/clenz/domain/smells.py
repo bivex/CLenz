@@ -31,6 +31,18 @@ class SmellKind(StrEnum):
     RETURN_COUNT = "return_count"
     CYCLOMATIC_COMPLEXITY = "cyclomatic_complexity"
     TODO_COMMENT = "todo_comment"
+    SWITCH_STATEMENTS = "switch_statements"
+    MESSAGE_CHAINS = "message_chains"
+    DATA_CLUMPS = "data_clumps"
+    FEATURE_ENVY = "feature_envy"
+    PRIMITIVE_OBSESSION = "primitive_obsession"
+    MIDDLE_MAN = "middle_man"
+    SPECULATIVE_GENERALITY = "speculative_generality"
+    DIVERGENT_CHANGE = "divergent_change"
+    SHOTGUN_SURGERY = "shotgun_surgery"
+    TEMPORARY_FIELD = "temporary_field"
+    REFUSED_BEQUEST = "refused_bequest"
+    COMMENT_DENSITY = "comment_density"
 
 
 @dataclass(frozen=True, slots=True)
