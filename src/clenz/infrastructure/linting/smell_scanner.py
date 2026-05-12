@@ -384,23 +384,38 @@ def _check_uninitialized_vars(tokens: list[_Token], lexer_type: type) -> list[Co
     }
     type_keywords = {t for t in type_keywords if t is not None}
 
-    for i, tok in enumerate(tokens):
-        if tok.type not in type_keywords:
+    func_regions = _find_function_regions(tokens, lexer_type)
+    for region in func_regions:
+        if region.open_brace_idx is None or region.close_brace_idx is None:
             continue
-        # Look ahead for: type Identifier ;
-        if i + 2 < len(tokens):
-            name_tok = tokens[i + 1]
-            after_tok = tokens[i + 2]
-            if name_tok.type == lexer_type.Identifier and after_tok.text == ";":
-                smells.append(
-                    CodeSmell(
-                        kind=SmellKind.UNINITIALIZED_VAR,
-                        severity=SmellSeverity.WARNING,
-                        message=f"uninitialized variable '{name_tok.text}' — initialize at declaration",
-                        line=name_tok.line,
-                        column=name_tok.column,
-                    )
-                )
+        start = region.open_brace_idx + 1
+        end = region.close_brace_idx
+
+        for i in range(start, end):
+            tok = tokens[i]
+            if tok.type not in type_keywords:
+                continue
+            # Look ahead for: type Identifier ;
+            if i + 2 < len(tokens):
+                name_tok = tokens[i + 1]
+                after_tok = tokens[i + 2]
+                if name_tok.type == lexer_type.Identifier and after_tok.text == ";":
+                    # Check if 'const' or 'extern' precedes it
+                    is_special = False
+                    for k in range(max(start, i - 2), i):
+                        if tokens[k].text in ("extern", "static"):
+                            is_special = True
+                            break
+                    if not is_special:
+                        smells.append(
+                            CodeSmell(
+                                kind=SmellKind.UNINITIALIZED_VAR,
+                                severity=SmellSeverity.WARNING,
+                                message=f"uninitialized variable '{name_tok.text}' — initialize at declaration",
+                                line=name_tok.line,
+                                column=name_tok.column,
+                            )
+                        )
     return smells
 
 
@@ -446,6 +461,17 @@ def _check_global_variables(tokens: list[_Token], lexer_type: type) -> list[Code
                 if tokens[k].text == ";":
                     break
             if is_extern:
+                continue
+
+            # Skip if const
+            is_const = False
+            for k in range(max(i - 5, 0), i + 1):
+                if tokens[k].type == getattr(lexer_type, "Const", None) or tokens[k].text == "const":
+                    is_const = True
+                    break
+                if tokens[k].text in (";", "}", "{"):
+                    break
+            if is_const:
                 continue
 
             # Check if this type specifier is part of a struct/enum/union declaration

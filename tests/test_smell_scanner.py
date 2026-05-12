@@ -311,6 +311,16 @@ void ok() {
         uninit = [s for s in smells if s.kind == SmellKind.UNINITIALIZED_VAR]
         assert uninit == []
 
+    def test_struct_field_passes(self) -> None:
+        smells = _scan("""
+struct Point {
+    int x;
+    int y;
+};
+""")
+        uninit = [s for s in smells if s.kind == SmellKind.UNINITIALIZED_VAR]
+        assert uninit == []
+
 
 # ---------------------------------------------------------------------------
 # Global variable
@@ -347,6 +357,13 @@ extern int external_var;
 void local() {
     int local_var = 0;
 }
+""")
+        globals_ = [s for s in smells if s.kind == SmellKind.GLOBAL_VARIABLE]
+        assert globals_ == []
+
+    def test_const_global_passes(self) -> None:
+        smells = _scan("""
+const int MAX = 100;
 """)
         globals_ = [s for s in smells if s.kind == SmellKind.GLOBAL_VARIABLE]
         assert globals_ == []
