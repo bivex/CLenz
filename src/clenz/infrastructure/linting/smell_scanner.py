@@ -234,6 +234,9 @@ def _check_unchecked_malloc(tokens: list[_Token]) -> list[CodeSmell]:
     for i, tok in enumerate(tokens):
         if tok.text not in _MALLOC_NAMES:
             continue
+        # Ensure it is a function call
+        if i + 1 >= len(tokens) or tokens[i + 1].text != "(":
+            continue
         # Look ahead for a null-check pattern: if (!ptr or if (ptr == NULL
         found_check = False
         for j in range(i + 1, min(i + 30, len(tokens))):
@@ -998,17 +1001,19 @@ def _check_memory_leak_risk(tokens: list[_Token], lexer_type: type) -> list[Code
             tok = tokens[idx]
 
             if tok.text in _MALLOC_NAMES:
-                var = _find_assigned_var(tokens, idx)
-                if var:
-                    alloc_vars[var] = tok.line
+                if idx + 1 < len(tokens) and tokens[idx + 1].text == "(":
+                    var = _find_assigned_var(tokens, idx)
+                    if var:
+                        alloc_vars[var] = tok.line
             elif tok.text == "free":
-                # Look ahead for the variable name being freed
-                for j in range(idx + 1, min(idx + 6, len(tokens))):
-                    if tokens[j].text in alloc_vars:
-                        del alloc_vars[tokens[j].text]
-                        break
-                    if tokens[j].text == ";":
-                        break
+                if idx + 1 < len(tokens) and tokens[idx + 1].text == "(":
+                    # Look ahead for the variable name being freed
+                    for j in range(idx + 1, min(idx + 6, len(tokens))):
+                        if tokens[j].text in alloc_vars:
+                            del alloc_vars[tokens[j].text]
+                            break
+                        if tokens[j].text == ";":
+                            break
 
         # Report any still-allocated variables at function end
         for var, line in alloc_vars.items():

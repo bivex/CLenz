@@ -36,3 +36,8 @@ line-length = 100
 exclude = [
   "src/clenz/infrastructure/antlr/generated/c",
 ]
+
+[dependency-groups]
+dev = [
+    "hypothesis>=6.152.6",
+]

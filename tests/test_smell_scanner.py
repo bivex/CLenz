@@ -158,6 +158,17 @@ void leak() {
         unchecked = [s for s in smells if s.kind == SmellKind.UNCHECKED_MALLOC]
         assert len(unchecked) >= 2, f"expected >=2 unchecked malloc smells, got {len(unchecked)}: {unchecked}"
 
+    def test_malloc_as_function_pointer_passes(self) -> None:
+        """malloc used as a function pointer (e.g. assignment) should not be flagged as an unchecked call."""
+        smells = _scan("""
+void set_allocator() {
+    global_allocate = malloc;
+    global_reallocate = realloc;
+}
+""")
+        unchecked = [s for s in smells if s.kind == SmellKind.UNCHECKED_MALLOC]
+        assert unchecked == []
+
 
 # ---------------------------------------------------------------------------
 # Unchecked return value
