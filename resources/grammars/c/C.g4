@@ -721,16 +721,16 @@ fragment IntegerConstant
 | BinaryConstant
 ;
 fragment BinaryConstant
-: '0' [bB] [0-1]+
+: '0' [bB] [0-1] ('\''? [0-1])*
 ;
 fragment DecimalConstant
-: NonzeroDigit Digit*
+: NonzeroDigit ('\''? Digit)*
 ;
 fragment OctalConstant
-: '0' OctalDigit*
+: '0' ('\''? OctalDigit)*
 ;
 fragment HexadecimalConstant
-: HexadecimalPrefix HexadecimalDigit+
+: HexadecimalPrefix '\''? HexadecimalDigit ('\''? HexadecimalDigit)*
 ;
 fragment HexadecimalPrefix
 : '0' [xX]
@@ -782,7 +782,7 @@ fragment Sign
 : [+-]
 ;
 DigitSequence
-: Digit+
+: Digit ('\''? Digit)*
 ;
 fragment HexadecimalFractionalConstant
 : HexadecimalDigitSequence? '.' HexadecimalDigitSequence
@@ -792,7 +792,7 @@ fragment BinaryExponentPart
 : [pP] Sign? DigitSequence
 ;
 fragment HexadecimalDigitSequence
-: HexadecimalDigit+
+: HexadecimalDigit ('\''? HexadecimalDigit)*
 ;
 fragment FloatingSuffix
 : [flFL]
