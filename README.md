@@ -81,29 +81,29 @@ All commands output JSON to stdout. Exit codes:
 
 ## Code smell detectors
 
-29 detectors across three severity levels:
+29 detectors across three severity levels, tuned for C-specific risks (no exceptions, no RAII, no type safety):
 
-### Error
+### Error — safety / UB / crashes
 
 | Detector | Description |
 |----------|-------------|
 | `unchecked_malloc` | `malloc`/`calloc`/`realloc` result used without NULL check |
 | `unsafe_function` | Use of `gets`, `strcpy`, `sprintf`, `strcat`, `scanf("%s", ...)` |
 | `memory_leak_risk` | Pointer overwritten after allocation without `free` |
-| `deep_nesting` | Control flow nesting deeper than 5 levels |
-| `cyclomatic_complexity` | Function cyclomatic complexity exceeds 15 |
-| `return_count` | More than 4 `return` statements in a single function |
+| `uninitialized_var` | Local variables used before assignment |
+| `unchecked_return` | Function call with a non-void return type where the result is discarded |
 
-### Warning
+### Warning — logic errors / hard-to-debug issues / OOP smells
 
 | Detector | Description |
 |----------|-------------|
+| `deep_nesting` | Control flow nesting deeper than 5 levels |
+| `cyclomatic_complexity` | Function cyclomatic complexity exceeds 15 |
 | `global_variable` | File-scope mutable variables |
+| `missing_const` | Pointer parameters that could be `const`-qualified |
+| `return_count` | More than 4 `return` statements — risk of resource leaks on early returns |
 | `long_function` | Functions exceeding 50 lines |
 | `magic_number` | Numeric literals other than 0, 1, 2 in non-constant expressions |
-| `missing_const` | Pointer parameters that could be `const`-qualified |
-| `uninitialized_var` | Local variables used before assignment |
-| `unchecked_return` | Function call with a non-void return type where the result is discarded |
 | `too_many_parameters` | Functions with more than 5 parameters |
 | `large_file` | Source files exceeding 500 lines |
 | `switch_statements` | `switch` with more than 10 cases |
@@ -119,7 +119,7 @@ All commands output JSON to stdout. Exit codes:
 | `refused_bequest` | Base abstraction ignored by derived logic |
 | `speculative_generality` | Unused parameters, dead branches, or overly abstract code |
 
-### Info
+### Info — style / readability
 
 | Detector | Description |
 |----------|-------------|

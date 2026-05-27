@@ -318,7 +318,7 @@ def _check_unchecked_return(tokens: list[_Token]) -> list[CodeSmell]:
                     smells.append(
                         CodeSmell(
                             kind=SmellKind.UNCHECKED_RETURN,
-                            severity=SmellSeverity.WARNING,
+                            severity=SmellSeverity.ERROR,
                             message=f"unchecked return value of '{tok.text}'",
                             line=tok.line,
                             column=tok.column,
@@ -413,7 +413,7 @@ def _check_uninitialized_vars(tokens: list[_Token], lexer_type: type) -> list[Co
                         smells.append(
                             CodeSmell(
                                 kind=SmellKind.UNINITIALIZED_VAR,
-                                severity=SmellSeverity.WARNING,
+                                severity=SmellSeverity.ERROR,
                                 message=f"uninitialized variable '{name_tok.text}' — initialize at declaration",
                                 line=name_tok.line,
                                 column=name_tok.column,
@@ -653,7 +653,7 @@ def _check_missing_const(tokens: list[_Token], lexer_type: type) -> list[CodeSme
                     smells.append(
                         CodeSmell(
                             kind=SmellKind.MISSING_CONST,
-                            severity=SmellSeverity.INFO,
+                            severity=SmellSeverity.WARNING,
                             message=f"parameter 'char *{var_name}' could be 'const char *{var_name}'",
                             line=tok.line,
                             column=tok.column,
@@ -857,7 +857,7 @@ def _check_return_count(tokens: list[_Token], lexer_type: type) -> list[CodeSmel
             smells.append(
                 CodeSmell(
                     kind=SmellKind.RETURN_COUNT,
-                    severity=SmellSeverity.INFO,
+                    severity=SmellSeverity.WARNING,
                     message=(
                         f"function '{region.name}' has {return_count} return statements "
                         f"(max {_MAX_RETURN_COUNT}) — consider using a single exit point"
@@ -1020,7 +1020,7 @@ def _check_memory_leak_risk(tokens: list[_Token], lexer_type: type) -> list[Code
             smells.append(
                 CodeSmell(
                     kind=SmellKind.MEMORY_LEAK_RISK,
-                    severity=SmellSeverity.WARNING,
+                    severity=SmellSeverity.ERROR,
                     message=f"'{var}' allocated at line {line} — ensure it is freed on all paths",
                     line=line,
                     column=0,
