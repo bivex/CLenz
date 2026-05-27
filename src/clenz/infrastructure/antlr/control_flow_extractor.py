@@ -42,11 +42,8 @@ class _ExtractorContext:
             stop=ctx.stop.tokenIndex,
         )
 
-    def compact(self, ctx, *, limit: int = 96) -> str:
-        text = re.sub(r"\s+", " ", self.text(ctx)).strip()
-        if len(text) <= limit:
-            return text
-        return f"{text[: limit - 1]}..."
+    def compact(self, ctx) -> str:
+        return re.sub(r"\s+", " ", self.text(ctx)).strip()
 
 
 @dataclass(frozen=True, slots=True)
@@ -71,7 +68,6 @@ class _FunctionSlice:
 _MAX_STRUCTURED_PARSE_CHARS = 1400
 _MAX_STRUCTURED_PARSE_TOKENS = 220
 _MAX_STRUCTURED_PARSE_LINES = 24
-_SUMMARY_LABEL_LIMIT = 96
 
 
 class AntlrCControlFlowExtractor(CControlFlowExtractor):
@@ -890,11 +886,8 @@ def _slice_token_text(
     return statement_text[start:end]
 
 
-def _compact_label_text(text: str, *, limit: int = _SUMMARY_LABEL_LIMIT) -> str:
-    compact = re.sub(r"\s+", " ", text).strip()
-    if len(compact) <= limit:
-        return compact
-    return f"{compact[: limit - 1]}..."
+def _compact_label_text(text: str) -> str:
+    return re.sub(r"\s+", " ", text).strip()
 
 
 def _split_top_level_statement_spans(

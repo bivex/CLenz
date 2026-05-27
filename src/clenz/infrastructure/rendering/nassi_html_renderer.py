@@ -320,10 +320,12 @@ class HtmlNassiDiagramRenderer(NassiDiagramRenderer):
       .ns-if-cap {{
         border-bottom: 1px solid var(--border);
         line-height: 0;
+        overflow: visible;
       }}
       .ns-if-svg {{
         display: block;
         height: auto;
+        max-width: none;
       }}
       .ns-if-triangle {{
         fill: var(--blue-dim);
@@ -335,7 +337,7 @@ class HtmlNassiDiagramRenderer(NassiDiagramRenderer):
         stroke-width: 1;
       }}
       .ns-if-condition-fo {{
-        overflow: hidden;
+        overflow: visible;
       }}
       .ns-if-condition-text {{
         font-family: var(--mono);
@@ -649,10 +651,7 @@ class HtmlNassiDiagramRenderer(NassiDiagramRenderer):
 
         content_width = max(
             360,
-            min(
-                1600,
-                max(longest_token * 8 + 48, ceil(char_count / 2) * 7 + 64),
-            ),
+            max(longest_token * 8 + 48, ceil(char_count / 2) * 7 + 64),
         )
         svg_width = content_width + 40
         chars_per_line = max(18, int(content_width / 7.4))
@@ -682,7 +681,8 @@ class HtmlNassiDiagramRenderer(NassiDiagramRenderer):
         return (
             f'<div class="ns-if-cap ns-if-depth-{d}" aria-label="If {escaped}">'
             f'<svg class="ns-if-svg" viewBox="0 0 {svg_width} {svg_height}" '
-            f'width="{svg_width}" height="{svg_height}" preserveAspectRatio="xMidYMid meet">'
+            f'width="{svg_width}" height="{svg_height}" preserveAspectRatio="xMinYMin meet" '
+            f'style="overflow:visible">'
             f'<polygon points="0,0 {svg_width},0 {half_width},{split_y}" '
             f'class="ns-if-triangle ns-if-depth-{d}-triangle"/>'
             f'<foreignObject x="20" y="6" width="{content_width}" height="{text_height}" '
